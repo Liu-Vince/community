@@ -1,4 +1,4 @@
-package com.lwc.community.config.controller;
+package com.lwc.community.controller;
 
 import com.lwc.community.service.AlphaService;
 import org.springframework.beans.factory.annotation.Autowired;

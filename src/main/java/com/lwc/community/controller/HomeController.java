@@ -1,4 +1,4 @@
-package com.lwc.community.config.controller;
+package com.lwc.community.controller;
 
 import com.lwc.community.entity.DiscussPost;
 import com.lwc.community.entity.Page;
