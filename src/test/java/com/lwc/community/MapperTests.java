@@ -1,8 +1,10 @@
 package com.lwc.community;
 
 import com.lwc.community.dao.DiscussPostMapper;
+import com.lwc.community.dao.LoginTicketMapper;
 import com.lwc.community.dao.UserMapper;
 import com.lwc.community.entity.DiscussPost;
+import com.lwc.community.entity.LoginTicket;
 import com.lwc.community.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +28,9 @@ public class MapperTests {
     private UserMapper userMapper;
     @Autowired
     private DiscussPostMapper discussPostMapper;
+
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
     @Test
     public void testSelectUser(){
         User user = userMapper.selectById(101);
@@ -68,5 +73,24 @@ public class MapperTests {
         list.forEach(System.out::println);
         int rows = discussPostMapper.selectDiscussPostRows(0);
         System.out.println(rows);
+    }
+
+    @Test
+    public void testInsertLoginTicket() {
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(101);
+        loginTicket.setTicket("abc");
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis()+ 1000* 60 *10));
+        loginTicketMapper.insertLoginTicket(loginTicket);
+    }
+    @Test
+    public void testSelectLoginTicket(){
+        LoginTicket loginTicket = loginTicketMapper.selectByTicket("abc");
+        System.out.println(loginTicket);
+
+        loginTicketMapper.updateStatus("abc",1);
+        loginTicket = loginTicketMapper.selectByTicket("abc");
+        System.out.println(loginTicket);
     }
 }
