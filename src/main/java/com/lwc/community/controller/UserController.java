@@ -1,6 +1,7 @@
 package com.lwc.community.controller;
 
 
+import com.lwc.community.annotation.LoginRequired;
 import com.lwc.community.entity.User;
 import com.lwc.community.service.UserService;
 import com.lwc.community.util.CommunityUtil;
@@ -49,11 +50,13 @@ public class UserController {
     @Autowired
     private HostHolder hostHolder;
 
+    @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getSettingPage() {
         return "/site/setting";
     }
 
+    @LoginRequired
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model) {
         if (headerImage == null) {
