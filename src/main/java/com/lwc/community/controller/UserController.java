@@ -92,7 +92,7 @@ public class UserController {
         // 服务器存放路径
         fileName = uploadPath + "/" + fileName;
         // 文件后缀
-        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        String suffix = fileName.substring(fileName.lastIndexOf(".") +1);
         // 响应图片
         response.setContentType("image/" + suffix);
         try (
