@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
 /**
  * @author 刘文长
  * @version 1.0
@@ -92,7 +94,7 @@ public class UserController {
         // 服务器存放路径
         fileName = uploadPath + "/" + fileName;
         // 文件后缀
-        String suffix = fileName.substring(fileName.lastIndexOf(".") +1);
+        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
         // 响应图片
         response.setContentType("image/" + suffix);
         try (
@@ -109,4 +111,52 @@ public class UserController {
         }
     }
 
+    @RequestMapping(path = "/update", method = RequestMethod.POST)
+    public String updatePassword(Model model, @CookieValue("ticket") String ticket, String oldPassword, String newPassword, String confirmPassword) {
+
+
+        User u = hostHolder.getUser();
+        String oldPasswordMd5 = CommunityUtil.md5(oldPassword + u.getSalt());
+
+//        if (oldPassword==null){
+//            model.addAttribute("oldPasswordMsg","请输入原始密码!");
+//            return "/site/setting";
+//        }
+//        if (newPassword==null){
+//            model.addAttribute("newPasswordMsg","请输入新密码!");
+//            return "/site/setting";
+//        }
+//        if (confirmPassword==null) {
+//            model.addAttribute("confirmPasswordMsg", "请确认密码!");
+//            return "/site/setting";
+//        }
+
+        if (!(u.getPassword().equals(oldPasswordMd5))) {
+            model.addAttribute("oldpasswordMsg", "旧密码输入错误");
+            return "/site/setting";
+        }
+
+
+        if (StringUtils.isBlank(newPassword)) {
+            model.addAttribute("newpasswordMsg", "新密码不能为空");
+            return "/site/setting";
+        }
+//        if (newPassword.length() < 8) {
+//            model.addAttribute("newpasswordMsg", "新密码不能小于八位");
+//            return "/site/setting";
+//        }
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("confirmpasswordMsg", "两次密码输入不一致");
+            return "/site/setting";
+        }
+        if (newPassword.equals(oldPassword)) {
+            model.addAttribute("newpasswordMsg", "新密码不能和原密码相同");
+            return "/site/setting";
+        }
+
+        userService.updatePassword(u.getId(), CommunityUtil.md5(newPassword + u.getSalt()));
+        userService.logout(ticket);
+        return "redirect:/login";
+
+    }
 }
