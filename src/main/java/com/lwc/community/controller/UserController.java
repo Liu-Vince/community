@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * @author 刘文长
@@ -114,52 +115,19 @@ public class UserController {
         }
     }
 
-    @RequestMapping(path = "/update", method = RequestMethod.POST)
-    public String updatePassword(Model model, @CookieValue("ticket") String ticket, String oldPassword, String newPassword, String confirmPassword) {
-
-
-        User u = hostHolder.getUser();
-        String oldPasswordMd5 = CommunityUtil.md5(oldPassword + u.getSalt());
-
-//        if (oldPassword==null){
-//            model.addAttribute("oldPasswordMsg","请输入原始密码!");
-//            return "/site/setting";
-//        }
-//        if (newPassword==null){
-//            model.addAttribute("newPasswordMsg","请输入新密码!");
-//            return "/site/setting";
-//        }
-//        if (confirmPassword==null) {
-//            model.addAttribute("confirmPasswordMsg", "请确认密码!");
-//            return "/site/setting";
-//        }
-
-        if (!(u.getPassword().equals(oldPasswordMd5))) {
-            model.addAttribute("oldpasswordMsg", "旧密码输入错误");
+    // 修改密码
+    @RequestMapping(path = "/updatePassword", method = RequestMethod.POST)
+    public String updatePassword(@CookieValue("ticket") String ticket,String oldPassword, String newPassword, String confirmPassword,Model model) {
+        User user = hostHolder.getUser();
+        Map<String, Object> map = userService.updatePassword(user.getId(), oldPassword, newPassword, confirmPassword);
+        if (map == null || map.isEmpty()) {
+            userService.logout(ticket);
+            return "redirect:/logout";
+        } else {
+            model.addAttribute("oldpasswordMsg", map.get("oldpasswordMsg"));
+            model.addAttribute("newpasswordMsg", map.get("newpasswordMsg"));
+            model.addAttribute("confirmpasswordMsg", map.get("confirmpasswordMsg"));
             return "/site/setting";
         }
-
-
-        if (StringUtils.isBlank(newPassword)) {
-            model.addAttribute("newpasswordMsg", "新密码不能为空");
-            return "/site/setting";
-        }
-//        if (newPassword.length() < 8) {
-//            model.addAttribute("newpasswordMsg", "新密码不能小于八位");
-//            return "/site/setting";
-//        }
-        if (!newPassword.equals(confirmPassword)) {
-            model.addAttribute("confirmpasswordMsg", "两次密码输入不一致");
-            return "/site/setting";
-        }
-        if (newPassword.equals(oldPassword)) {
-            model.addAttribute("newpasswordMsg", "新密码不能和原密码相同");
-            return "/site/setting";
-        }
-
-        userService.updatePassword(u.getId(), CommunityUtil.md5(newPassword + u.getSalt()));
-        userService.logout(ticket);
-        return "redirect:/login";
-
     }
 }
