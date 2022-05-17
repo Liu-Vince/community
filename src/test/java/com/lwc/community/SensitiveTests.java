@@ -22,7 +22,7 @@ public class SensitiveTests {
 
     @Test
     public void testSensitiveFilter() {
-        String text = "这里不可以赌*博，嫖娼，吸毒!";
+        String text = "这里不可以嫖*娼,反*华!";
         text = sensitiveFilter.filter(text);
         System.out.println(text);
     }
