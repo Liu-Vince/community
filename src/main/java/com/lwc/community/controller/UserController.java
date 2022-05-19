@@ -3,6 +3,7 @@ package com.lwc.community.controller;
 
 import com.lwc.community.annotation.LoginRequired;
 import com.lwc.community.entity.User;
+import com.lwc.community.service.LikeService;
 import com.lwc.community.service.UserService;
 import com.lwc.community.util.CommunityUtil;
 import com.lwc.community.util.HostHolder;
@@ -50,6 +51,9 @@ public class UserController {
 
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private LikeService likeService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -129,5 +133,22 @@ public class UserController {
             model.addAttribute("confirmpasswordMsg", map.get("confirmpasswordMsg"));
             return "/site/setting";
         }
+    }
+
+    // 个人主页
+    @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId, Model model){
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在");
+        }
+
+        // 用户
+        model.addAttribute("user", user);
+        // 点赞数量
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount", likeCount);
+
+        return "/site/profile";
     }
 }
