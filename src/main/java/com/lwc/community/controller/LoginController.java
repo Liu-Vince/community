@@ -6,11 +6,13 @@ import com.lwc.community.service.UserService;
 import com.lwc.community.util.CommunityConstant;
 import com.lwc.community.util.CommunityUtil;
 import com.lwc.community.util.MailClient;
+import com.lwc.community.util.RedisKeyUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author 刘文长
@@ -50,6 +53,8 @@ public class LoginController implements CommunityConstant {
 
     @Autowired
     private TemplateEngine templateEngine;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @RequestMapping(path = "/register", method = RequestMethod.GET)
     public String getRegisterPage() {
@@ -95,14 +100,24 @@ public class LoginController implements CommunityConstant {
     }
 
     @RequestMapping(path = "/kaptcha",method = RequestMethod.GET)
-    public void getKaptcha(HttpServletResponse response, HttpSession session){
+    public void getKaptcha(HttpServletResponse response/*, HttpSession session*/){
         //生成验证码
         String text = kaptchaProducer.createText();
         BufferedImage image = kaptchaProducer.createImage(text);
 
         // 将验证码存入session
-        session.setAttribute("kaptcha", text);
+//        session.setAttribute("kaptcha", text);
 
+        // 验证码的归属者
+        String kaptchaOwner = CommunityUtil.generateUUID();
+        Cookie cookie = new Cookie("kaptchaOwner", kaptchaOwner);
+        cookie.setMaxAge(60);
+        cookie.setPath(contextPath);
+        response.addCookie(cookie);
+
+        // 将验证码存入Redis
+        String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+        redisTemplate.opsForValue().set(redisKey,text,60, TimeUnit.SECONDS);
         // 将图片输出给浏览器
         response.setContentType("image/png");
         try {
@@ -116,8 +131,14 @@ public class LoginController implements CommunityConstant {
 
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public String login(String username, String password, String code, boolean remeberme,
-                        Model model, HttpSession session, HttpServletResponse response){
-        String kaptcha = (String)session.getAttribute("kaptcha");
+                        Model model, HttpSession session, HttpServletResponse response,
+                        @CookieValue("kaptchaOwner") String kaptchaOwner){
+//        String kaptcha = (String)session.getAttribute("kaptcha");
+        String kaptcha = null;
+        if (StringUtils.isNotBlank(kaptchaOwner)) {
+            String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+            kaptcha = (String) redisTemplate.opsForValue().get(redisKey);
+        }
         if(StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)){
             model.addAttribute("codeMsg", "验证码不正确");
             return "/site/login";
@@ -154,9 +175,13 @@ public class LoginController implements CommunityConstant {
     // 获取验证码
     @RequestMapping(path = "/forget/code", method = RequestMethod.GET)
     @ResponseBody
-    public String getForgetCode(String email, HttpSession session) {
+    public String getForgetCode(String email/*, HttpSession session*/) {
         if (StringUtils.isBlank(email)) {
             return CommunityUtil.getJSONString(1, "邮箱不能为空！");
+        }
+        String redisKey = RedisKeyUtil.getVerifyCode(email);
+        if (redisTemplate.hasKey(redisKey)){
+            return CommunityUtil.getJSONString(1, "验证码已发送，请两分钟后再试!");
         }
 
         // 发送邮件
@@ -168,15 +193,21 @@ public class LoginController implements CommunityConstant {
         mailClient.sendMail(email, "找回密码", content);
 
         // 保存验证码
-        session.setAttribute("verifyCode", code);
+//        session.setAttribute("verifyCode", code);
+
+        redisTemplate.opsForValue().set(redisKey,code,120,TimeUnit.SECONDS);
 
         return CommunityUtil.getJSONString(0);
     }
 
     // 重置密码
     @RequestMapping(path = "/forget/password", method = RequestMethod.POST)
-    public String resetPassword(String email, String verifyCode, String password, Model model, HttpSession session) {
-        String code = (String) session.getAttribute("verifyCode");
+    public String resetPassword(String email, String verifyCode, String password, Model model/*, HttpSession session*/) {
+//        String code = (String) session.getAttribute("verifyCode");
+        String code = null;
+        if (StringUtils.isNotBlank(email)){
+        String redisKey = RedisKeyUtil.getVerifyCode(email);
+        code = (String) redisTemplate.opsForValue().get(redisKey);}
         if (StringUtils.isBlank(verifyCode) || StringUtils.isBlank(code) || !code.equalsIgnoreCase(verifyCode)) {
             model.addAttribute("codeMsg", "验证码错误!");
             return "/site/forget";
