@@ -53,7 +53,7 @@ public class ElasticsearchService {
         discussRepository.save(post);
     }
 
-    private void deleteDiscussPost(int id) {
+    public void deleteDiscussPost(int id) {
         discussRepository.deleteById(id);
     }
 
