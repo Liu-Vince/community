@@ -1,6 +1,8 @@
 $(function(){
     $("#topBtn").click(setTop);
+    $("#unTopBtn").click(unSetTop);
     $("#wonderfulBtn").click(setWonderful);
+    $("#unWonderfulBtn").click(unSetWonderful);
     $("#deleteBtn").click(setDelete);
 });
 
@@ -35,6 +37,20 @@ function setTop() {
         }
     );
 }
+function unSetTop() {
+    $.post(
+        CONTEXT_PATH + "/discuss/untop",
+        {"id":$("#postId").val()},
+        function(data) {
+            data = $.parseJSON(data);
+            if(data.code == 0) {
+                $("#unTopBtn").attr("disabled", "disabled");
+            } else {
+                alert(data.msg);
+            }
+        }
+    );
+}
 
 // 加精
 function setWonderful() {
@@ -51,7 +67,20 @@ function setWonderful() {
         }
     );
 }
-
+function unSetWonderful() {
+    $.post(
+        CONTEXT_PATH + "/discuss/unwonderful",
+        {"id":$("#postId").val()},
+        function(data) {
+            data = $.parseJSON(data);
+            if(data.code == 0) {
+                $("#unWonderfulBtn").attr("disabled", "disabled");
+            } else {
+                alert(data.msg);
+            }
+        }
+    );
+}
 // 删除
 function setDelete() {
     $.post(

@@ -196,6 +196,20 @@ public class DiscussPostController implements CommunityConstant {
 
         return CommunityUtil.getJSONString(0);
     }
+    @RequestMapping(path = "/untop", method = RequestMethod.POST)
+    @ResponseBody
+    public String unSetTop(int id) {
+        discussPostService.updateType(id,0);
+        // 触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(id);
+        eventProducer.fireEvent(event);
+
+        return CommunityUtil.getJSONString(0);
+    }
     // 加精
     @RequestMapping(path = "/wonderful", method = RequestMethod.POST)
     @ResponseBody
@@ -211,11 +225,29 @@ public class DiscussPostController implements CommunityConstant {
 
         return CommunityUtil.getJSONString(0);
     }
+    @RequestMapping(path = "/unwonderful", method = RequestMethod.POST)
+    @ResponseBody
+    public String unSetWonderful(int id) {
+        discussPostService.updateStatus(id,0);
+        // 触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(id);
+        eventProducer.fireEvent(event);
+
+        return CommunityUtil.getJSONString(0);
+    }
     // 删除
     @RequestMapping(path = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public String setDelete(int id) {
+        if (hostHolder.getUser().getId() == discussPostService.findDiscussPostById(id).getUserId()){
         discussPostService.updateStatus(id,2);
+        }else {
+            return CommunityUtil.getJSONString(1,"抱歉您不是管理员，不能删除他人的帖子!");
+        }
         // 触发删帖事件
         Event event = new Event()
                 .setTopic(TOPIC_DELETE)
