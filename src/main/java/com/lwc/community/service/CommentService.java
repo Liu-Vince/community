@@ -2,6 +2,7 @@ package com.lwc.community.service;
 
 import com.lwc.community.dao.CommentMapper;
 import com.lwc.community.entity.Comment;
+import com.lwc.community.entity.DiscussPost;
 import com.lwc.community.util.CommunityConstant;
 import com.lwc.community.util.SensitiveFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,13 @@ public class CommentService implements CommunityConstant {
     public List<Comment> findCommentsByEntity(int entityType, int entityId, int offset, int limit) {
         return commentMapper.selectCommentsByEntity(entityType,entityId,offset,limit);
     }
+    public List<Comment> findComments(int userId,int entityType, int offset, int limit) {
+        return commentMapper.selectComments(userId, entityType,offset, limit);
+    }
+    public int findCommentsRows(int userId,int entityType) {
+        return commentMapper.selectCommentRows(userId,entityType);
+    }
+
 
     public int findCommentCount(int entityType, int entityId) {
         return commentMapper.selectCountByEntity(entityType, entityId);

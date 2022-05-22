@@ -1,7 +1,9 @@
 package com.lwc.community.dao;
 
 import com.lwc.community.entity.Comment;
+import com.lwc.community.entity.DiscussPost;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,4 +21,6 @@ public interface CommentMapper {
 
     int insertComment(Comment comment);
     Comment selectCommentById(int id);
+    List<Comment> selectComments(int userId,int entityType, int offset, int limit);
+    int selectCommentRows(@Param("userId")int userId,int entityType);
 }

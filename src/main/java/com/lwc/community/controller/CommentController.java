@@ -3,6 +3,7 @@ package com.lwc.community.controller;
 import com.lwc.community.entity.Comment;
 import com.lwc.community.entity.DiscussPost;
 import com.lwc.community.entity.Event;
+import com.lwc.community.entity.Page;
 import com.lwc.community.event.EventProducer;
 import com.lwc.community.service.CommentService;
 import com.lwc.community.service.DiscussPostService;
@@ -10,11 +11,13 @@ import com.lwc.community.util.CommunityConstant;
 import com.lwc.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.util.HtmlUtils;
 
-import java.util.Date;
+import java.util.*;
 
 /**
  * @author 刘文长
@@ -67,5 +70,34 @@ public class CommentController implements CommunityConstant {
         }
 
         return "redirect:/discuss/detail/" + discussPostId;
+    }
+
+
+    @RequestMapping(path = "/myreply", method = RequestMethod.GET)
+    public String getMyReplyPost(Model model, Page page) {
+        int userId = hostHolder.getUser().getId();
+        page.setRows(commentService.findCommentsRows(userId,1));
+        page.setPath("/comment/myreply");
+
+        List<Comment> list =
+                commentService.findComments(userId,1,page.getOffset(), page.getLimit());
+        List<Map<String, Object>> comments = new ArrayList<>();
+        if (list != null) {
+            for (Comment post : list) {
+                Map<String, Object> map = new HashMap<>(16);
+                String title = HtmlUtils.htmlUnescape(discussPostService.findDiscussPostById(post.getEntityId()).getTitle());
+                String content = HtmlUtils.htmlUnescape(post.getContent());
+                map.put("title",title);
+                post.setContent(content);
+                map.put("post", post);
+                comments.add(map);
+            }
+        }
+        model.addAttribute("commentCount", commentService.findCommentsRows(userId,1));
+        model.addAttribute("comments", comments);
+
+
+
+        return "site/my-reply";
     }
 }
