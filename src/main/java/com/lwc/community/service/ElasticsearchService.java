@@ -22,9 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 
@@ -59,22 +57,23 @@ public class ElasticsearchService {
         discussRepository.deleteById(id);
     }
 
-    public int searchDistancePostCount(String keyword) {
-        CountRequest countRequest = new CountRequest("discusspost");
-        CountResponse count = null;
-        try {
-            count = restHighLevelClient.count(countRequest, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            logger.error("es查询错误", e.getMessage());
-        }
-        if (count == null) {
-            return 0;
-        } else {
-            return (int) count.getCount();
-        }
-    }
+//    public int searchDistancePostCount(String keyword) {
+//        CountRequest countRequest = new CountRequest("discusspost");
+//        CountResponse count = null;
+//        try {
+//            count = restHighLevelClient.count(countRequest, RequestOptions.DEFAULT);
+//        } catch (IOException e) {
+//            logger.error("es查询错误", e.getMessage());
+//        }
+//        if (count == null) {
+//            return 0;
+//        } else {
+//            return (int) count.getCount();
+//        }
+//    }
 
-    public List<DiscussPost> searchDiscussPost(String keyword, int current, int limit) {
+    public Page<DiscussPost> searchDiscussPost(String keyword, int current, int limit) {
+        Pageable pageable = PageRequest.of(current, limit);
         SearchRequest searchRequest = new SearchRequest("discusspost");//discusspost是索引名，就是表名
 
         //高亮
@@ -91,8 +90,8 @@ public class ElasticsearchService {
                 .sort(SortBuilders.fieldSort("type").order(SortOrder.DESC))
                 .sort(SortBuilders.fieldSort("score").order(SortOrder.DESC))
                 .sort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
-                .from(current)// 指定从哪条开始查询
-                .size(limit)// 需要查出的总记录条数
+//                .from(current)// 指定从哪条开始查询
+//                .size(limit)// 需要查出的总记录条数
                 .highlighter(highlightBuilder);//高亮
 
         searchRequest.source(searchSourceBuilder);
@@ -104,7 +103,7 @@ public class ElasticsearchService {
 //            throw new RuntimeException(e);
         }
 
-        List<DiscussPost> list = new LinkedList<>();
+        List list = new LinkedList<>();
         for (SearchHit hit : searchResponse.getHits().getHits()) {
             DiscussPost discussPost = JSONObject.parseObject(hit.getSourceAsString(), DiscussPost.class);
 
@@ -120,9 +119,9 @@ public class ElasticsearchService {
 //            System.out.println(discussPost);
             list.add(discussPost);
         }
-        return list;
+//        return list;
+        return new PageImpl<>(list, pageable, searchResponse.getHits().getTotalHits().value);
 
-//        Page<DiscussPost> discussPosts = new Page<DiscussPost>() {
 
     }
 
