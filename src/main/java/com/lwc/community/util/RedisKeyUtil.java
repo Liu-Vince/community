@@ -16,6 +16,8 @@ public class RedisKeyUtil {
     private static final String PREFIX_TICKET = "ticket";
     private static final String PREFIX_USER = "user";
     private static final String PREFIX_VERIFYCODE = "verifycode";
+    private static final String PREFIX_UV = "uv";
+    private static final String PREFIX_DAU = "dau";
 
 
     // 某个实体的赞
@@ -60,6 +62,26 @@ public class RedisKeyUtil {
     // 忘记密码 验证码
     public static String getVerifyCode(String email) {
         return PREFIX_VERIFYCODE + SPLIT + email;
+    }
+
+    // 单日Uv
+    public static String getUVKey(String date) {
+        return PREFIX_UV + SPLIT + date;
+    }
+
+    // 区间uv
+    public static String getUVKey(String startDate, String endDate) {
+        return PREFIX_UV + SPLIT + startDate + SPLIT + endDate;
+    }
+
+    // 单日dau
+    public static String getDAUKey(String date) {
+        return PREFIX_DAU + SPLIT + date;
+    }
+
+    // 区间dua
+    public static String getDAUKey(String startDate, String endDate) {
+        return PREFIX_DAU + SPLIT + startDate + SPLIT + endDate;
     }
 
 }
