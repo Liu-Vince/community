@@ -181,12 +181,79 @@ public class DiscussPostController implements CommunityConstant {
 
 
 
-    // 置顶
+//    // 置顶
+//    @RequestMapping(path = "/top", method = RequestMethod.POST)
+//    @ResponseBody
+//    public String setTop(int id) {
+//        discussPostService.updateType(id,1);
+//        // 触发发帖事件
+//        Event event = new Event()
+//                .setTopic(TOPIC_PUBLISH)
+//                .setUserId(hostHolder.getUser().getId())
+//                .setEntityType(ENTITY_TYPE_POST)
+//                .setEntityId(id);
+//        eventProducer.fireEvent(event);
+//
+//        return CommunityUtil.getJSONString(0);
+//    }
+//    @RequestMapping(path = "/untop", method = RequestMethod.POST)
+//    @ResponseBody
+//    public String unSetTop(int id) {
+//        discussPostService.updateType(id,0);
+//        // 触发发帖事件
+//        Event event = new Event()
+//                .setTopic(TOPIC_PUBLISH)
+//                .setUserId(hostHolder.getUser().getId())
+//                .setEntityType(ENTITY_TYPE_POST)
+//                .setEntityId(id);
+//        eventProducer.fireEvent(event);
+//
+//        return CommunityUtil.getJSONString(0);
+//    }
+//    // 加精
+//    @RequestMapping(path = "/wonderful", method = RequestMethod.POST)
+//    @ResponseBody
+//    public String setWonderful(int id) {
+//        discussPostService.updateStatus(id,1);
+//        // 触发发帖事件
+//        Event event = new Event()
+//                .setTopic(TOPIC_PUBLISH)
+//                .setUserId(hostHolder.getUser().getId())
+//                .setEntityType(ENTITY_TYPE_POST)
+//                .setEntityId(id);
+//        eventProducer.fireEvent(event);
+//
+//        return CommunityUtil.getJSONString(0);
+//    }
+//    @RequestMapping(path = "/unwonderful", method = RequestMethod.POST)
+//    @ResponseBody
+//    public String unSetWonderful(int id) {
+//        discussPostService.updateStatus(id,0);
+//        // 触发发帖事件
+//        Event event = new Event()
+//                .setTopic(TOPIC_PUBLISH)
+//                .setUserId(hostHolder.getUser().getId())
+//                .setEntityType(ENTITY_TYPE_POST)
+//                .setEntityId(id);
+//        eventProducer.fireEvent(event);
+//
+//        return CommunityUtil.getJSONString(0);
+//    }
+
+
+    // 置顶、取消置顶
     @RequestMapping(path = "/top", method = RequestMethod.POST)
     @ResponseBody
     public String setTop(int id) {
-        discussPostService.updateType(id,1);
-        // 触发发帖事件
+        DiscussPost discussPostById = discussPostService.findDiscussPostById(id);
+        // 获取置顶状态，1为置顶，0为正常状态,1^1=0 0^1=1
+        int type = discussPostById.getType()^1;
+        discussPostService.updateType(id, type);
+        // 返回的结果
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", type);
+
+        // 触发发帖事件(更改帖子状态)
         Event event = new Event()
                 .setTopic(TOPIC_PUBLISH)
                 .setUserId(hostHolder.getUser().getId())
@@ -194,28 +261,22 @@ public class DiscussPostController implements CommunityConstant {
                 .setEntityId(id);
         eventProducer.fireEvent(event);
 
-        return CommunityUtil.getJSONString(0);
+        return CommunityUtil.getJSONString(0, null, map);
     }
-    @RequestMapping(path = "/untop", method = RequestMethod.POST)
-    @ResponseBody
-    public String unSetTop(int id) {
-        discussPostService.updateType(id,0);
-        // 触发发帖事件
-        Event event = new Event()
-                .setTopic(TOPIC_PUBLISH)
-                .setUserId(hostHolder.getUser().getId())
-                .setEntityType(ENTITY_TYPE_POST)
-                .setEntityId(id);
-        eventProducer.fireEvent(event);
 
-        return CommunityUtil.getJSONString(0);
-    }
-    // 加精
+    // 加精、取消加精
     @RequestMapping(path = "/wonderful", method = RequestMethod.POST)
     @ResponseBody
     public String setWonderful(int id) {
-        discussPostService.updateStatus(id,1);
-        // 触发发帖事件
+        DiscussPost discussPostById = discussPostService.findDiscussPostById(id);
+        int status = discussPostById.getStatus()^1;
+        // 1为加精，0为正常， 1^1=0, 0^1=1
+        discussPostService.updateStatus(id, status);
+        // 返回的结果
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", status);
+
+        // 触发发帖事件(更改帖子类型)
         Event event = new Event()
                 .setTopic(TOPIC_PUBLISH)
                 .setUserId(hostHolder.getUser().getId())
@@ -223,22 +284,10 @@ public class DiscussPostController implements CommunityConstant {
                 .setEntityId(id);
         eventProducer.fireEvent(event);
 
-        return CommunityUtil.getJSONString(0);
+        return CommunityUtil.getJSONString(0, null, map);
     }
-    @RequestMapping(path = "/unwonderful", method = RequestMethod.POST)
-    @ResponseBody
-    public String unSetWonderful(int id) {
-        discussPostService.updateStatus(id,0);
-        // 触发发帖事件
-        Event event = new Event()
-                .setTopic(TOPIC_PUBLISH)
-                .setUserId(hostHolder.getUser().getId())
-                .setEntityType(ENTITY_TYPE_POST)
-                .setEntityId(id);
-        eventProducer.fireEvent(event);
 
-        return CommunityUtil.getJSONString(0);
-    }
+
     // 删除
     @RequestMapping(path = "/delete", method = RequestMethod.POST)
     @ResponseBody

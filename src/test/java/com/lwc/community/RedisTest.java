@@ -134,4 +134,19 @@ public class RedisTest {
 
         System.out.println(obj);
     }
+
+
+
+    @Test
+    public void testHyperLogLog() {
+        String redisKey = "test:hll:01";
+        for (int i = 0; i < 10000; i++) {
+            redisTemplate.opsForHyperLogLog().add(redisKey,i);
+        }
+        for (int i = 0; i < 10000; i++) {
+            int r = (int) (Math.random() * 100000 + 1);
+            redisTemplate.opsForHyperLogLog().add(redisKey,r);
+        }
+        System.out.println(redisTemplate.opsForHyperLogLog().size(redisKey));
+    }
 }
