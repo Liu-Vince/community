@@ -56,7 +56,7 @@ public class AlphaController {
         //返回响应数据
         response.setContentType("text/html;charset=utf-8");
         try (PrintWriter writer = response.getWriter();) {
-            writer.write("<h1>牛客网</h1>");
+            writer.write("<h1>社区网</h1>");
         } catch (IOException e) {
             e.printStackTrace();
         }
