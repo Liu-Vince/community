@@ -18,6 +18,7 @@ public class RedisKeyUtil {
     private static final String PREFIX_VERIFYCODE = "verifycode";
     private static final String PREFIX_UV = "uv";
     private static final String PREFIX_DAU = "dau";
+    private static final String PREFIX_POST = "post";
 
 
     // 某个实体的赞
@@ -82,6 +83,11 @@ public class RedisKeyUtil {
     // 区间dua
     public static String getDAUKey(String startDate, String endDate) {
         return PREFIX_DAU + SPLIT + startDate + SPLIT + endDate;
+    }
+
+    // 帖子分数
+    public static String getPostScoreKey() {
+        return PREFIX_POST + SPLIT + "score";
     }
 
 }

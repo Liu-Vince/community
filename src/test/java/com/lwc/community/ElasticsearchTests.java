@@ -66,15 +66,15 @@ public class ElasticsearchTests {
     @Test
     public void testInsertList() {
         //把id为101的用户发的前100条帖子（List<DiscussPost>）存入es的discusspost索引（es的索引相当于数据库的表）
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(101, 0, 100));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(102, 0, 100));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(103, 0, 100));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(111, 0, 100));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(112, 0, 100));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(131, 0, 100));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(132, 0, 100));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(133, 0, 100));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(134, 0, 100));
+        discussRepository.saveAll(discussMapper.selectDiscussPosts(101, 0, 100,0));
+        discussRepository.saveAll(discussMapper.selectDiscussPosts(102, 0, 100,0));
+        discussRepository.saveAll(discussMapper.selectDiscussPosts(103, 0, 100,0));
+        discussRepository.saveAll(discussMapper.selectDiscussPosts(111, 0, 100,0));
+        discussRepository.saveAll(discussMapper.selectDiscussPosts(112, 0, 100,0));
+        discussRepository.saveAll(discussMapper.selectDiscussPosts(131, 0, 100,0));
+        discussRepository.saveAll(discussMapper.selectDiscussPosts(132, 0, 100,0));
+        discussRepository.saveAll(discussMapper.selectDiscussPosts(133, 0, 100,0));
+        discussRepository.saveAll(discussMapper.selectDiscussPosts(134, 0, 100,0));
     }
 
     //通过覆盖原内容，来修改一条数据
