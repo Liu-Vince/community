@@ -1,6 +1,6 @@
 package com.lwc.community.controller.interceptor;
 
-import com.lwc.community.annotation.LoginRequired;
+import com.lwc.community.config.annotation.LoginRequired;
 import com.lwc.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

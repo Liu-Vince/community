@@ -1,7 +1,7 @@
 package com.lwc.community.controller;
 
 
-import com.lwc.community.annotation.LoginRequired;
+import com.lwc.community.config.annotation.LoginRequired;
 import com.lwc.community.entity.User;
 import com.lwc.community.service.FollowService;
 import com.lwc.community.service.LikeService;

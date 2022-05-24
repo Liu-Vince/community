@@ -126,7 +126,7 @@ public class QuartzConfig {
         factoryBean.setJobDetail(deleteImageDetail);
         factoryBean.setName("deleteImageTrigger");
         factoryBean.setGroup("deleteImageTriggerGroup");
-        factoryBean.setRepeatInterval(1000 * 60 * 60 * 24 * 7);
+        factoryBean.setRepeatInterval(1000 * 60 * 60 * 24);
 //        factoryBean.setRepeatInterval(1000 );
         factoryBean.setJobDataMap(new JobDataMap());
 

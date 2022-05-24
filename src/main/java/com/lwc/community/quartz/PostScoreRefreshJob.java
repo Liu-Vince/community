@@ -57,7 +57,7 @@ public class PostScoreRefreshJob implements Job, CommunityConstant {
             return;
         }
 
-        logger.info("[任务开始] 正在刷新帖子分数:" + operations.size());
+        logger.info("[任务开始] 正在刷新帖子份数:" + operations.size());
         while (operations.size() > 0) {
             this.refresh((Integer) operations.pop());
         }
