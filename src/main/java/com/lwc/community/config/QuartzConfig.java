@@ -3,6 +3,7 @@ package com.lwc.community.config;
 import com.lwc.community.quartz.AlphaJob;
 import com.lwc.community.quartz.DeleteLogJob;
 import com.lwc.community.quartz.PostScoreRefreshJob;
+import com.lwc.community.quartz.WKImageDeleteJob;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.springframework.context.annotation.Bean;
@@ -98,6 +99,35 @@ public class QuartzConfig {
         factoryBean.setName("deleteLogTrigger");
         factoryBean.setGroup("deleteLogTriggerGroup");
         factoryBean.setRepeatInterval(1000 * 60 * 60 * 24 * 7);
+//        factoryBean.setRepeatInterval(1000);
+        factoryBean.setJobDataMap(new JobDataMap());
+
+
+        return factoryBean;
+    }
+
+    // 定时删wk创建的Image
+    @Bean
+    public JobDetailFactoryBean deleteImageDetail() {
+
+        JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+        factoryBean.setJobClass(WKImageDeleteJob.class);
+        factoryBean.setName("deleteImageJob");
+        factoryBean.setGroup("deleteImageJobGroup");
+        factoryBean.setDurability(true);
+        factoryBean.setRequestsRecovery(true);
+
+        return factoryBean;
+    }
+
+    @Bean
+    public SimpleTriggerFactoryBean deleteImageTrigger(JobDetail deleteImageDetail) {
+        SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+        factoryBean.setJobDetail(deleteImageDetail);
+        factoryBean.setName("deleteImageTrigger");
+        factoryBean.setGroup("deleteImageTriggerGroup");
+        factoryBean.setRepeatInterval(1000 * 60 * 60 * 24 * 7);
+//        factoryBean.setRepeatInterval(1000 );
         factoryBean.setJobDataMap(new JobDataMap());
 
 

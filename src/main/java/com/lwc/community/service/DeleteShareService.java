@@ -49,6 +49,7 @@ public class DeleteShareService {
         };
         // 60分钟后销毁
         Date startTime = new Date(System.currentTimeMillis() + 1000 *60 * 60);
+//        Date startTime = new Date(System.currentTimeMillis() + 1000 );
         taskScheduler.scheduleAtFixedRate(task, startTime,1000);
     }
 }

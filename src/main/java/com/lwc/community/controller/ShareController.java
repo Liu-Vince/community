@@ -55,7 +55,7 @@ public class ShareController implements CommunityConstant {
 
     @RequestMapping(path = "/share", method = RequestMethod.GET)
 //    @ResponseBody
-    public String share(String htmlUrl) {
+    public String share(String htmlUrl){
         // 文件名
         String fileName = CommunityUtil.generateUUID();
 
@@ -76,6 +76,11 @@ public class ShareController implements CommunityConstant {
 
 
 //        return CommunityUtil.getJSONString(0, null, map);
+//        try {
+//            sleep(5000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
         return "redirect:/share/image/" + fileName;
     }
 
