@@ -1,6 +1,7 @@
 package com.lwc.community.config;
 
 import com.lwc.community.quartz.AlphaJob;
+import com.lwc.community.quartz.DeleteLogJob;
 import com.lwc.community.quartz.PostScoreRefreshJob;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -69,6 +70,34 @@ public class QuartzConfig {
         factoryBean.setName("postScoreRefreshTrigger");
         factoryBean.setGroup("communityTriggerGroup");
         factoryBean.setRepeatInterval(1000 * 60 * 5);
+        factoryBean.setJobDataMap(new JobDataMap());
+
+
+        return factoryBean;
+    }
+
+
+    // 定时删log
+    @Bean
+    public JobDetailFactoryBean deleteLogDetail() {
+
+        JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+        factoryBean.setJobClass(DeleteLogJob.class);
+        factoryBean.setName("deleteLogJob");
+        factoryBean.setGroup("deleteLogJobGroup");
+        factoryBean.setDurability(true);
+        factoryBean.setRequestsRecovery(true);
+
+        return factoryBean;
+    }
+
+    @Bean
+    public SimpleTriggerFactoryBean deleteLogTrigger(JobDetail deleteLogDetail) {
+        SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+        factoryBean.setJobDetail(deleteLogDetail);
+        factoryBean.setName("deleteLogTrigger");
+        factoryBean.setGroup("deleteLogTriggerGroup");
+        factoryBean.setRepeatInterval(1000 * 60 * 60 * 24 * 7);
         factoryBean.setJobDataMap(new JobDataMap());
 
 
