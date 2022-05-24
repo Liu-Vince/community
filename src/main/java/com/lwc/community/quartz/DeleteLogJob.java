@@ -26,7 +26,7 @@ public class DeleteLogJob implements Job{
         try {
             FileUtils.cleanDirectory(file);
         } catch (IOException e) {
-//            throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 }

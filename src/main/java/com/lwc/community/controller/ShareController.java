@@ -2,13 +2,16 @@ package com.lwc.community.controller;
 
 import com.lwc.community.entity.Event;
 import com.lwc.community.event.EventProducer;
+import com.lwc.community.service.DeleteShareService;
 import com.lwc.community.util.CommunityConstant;
 import com.lwc.community.util.CommunityUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +26,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.lang.Thread.sleep;
 
 /**
  * @author Liu Wenchang
@@ -44,8 +49,12 @@ public class ShareController implements CommunityConstant {
     @Value("${wk.image.storage}")
     private String wkImageStorage;
 
+    @Autowired
+    private DeleteShareService deleteShareService;
+
+
     @RequestMapping(path = "/share", method = RequestMethod.GET)
-    @ResponseBody
+//    @ResponseBody
     public String share(String htmlUrl) {
         // 文件名
         String fileName = CommunityUtil.generateUUID();
@@ -59,11 +68,15 @@ public class ShareController implements CommunityConstant {
         eventProducer.fireEvent(event);
 
         // 返回访问路径
-        Map<String, Object> map = new HashMap<>();
-        map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
 
-        return CommunityUtil.getJSONString(0, null, map);
+        // 60分钟后销毁文件
+        deleteShareService.deleteShare(wkImageStorage + "/" + fileName + ".png");
 
+
+//        return CommunityUtil.getJSONString(0, null, map);
+        return "redirect:/share/image/" + fileName;
     }
 
     // 获取长图
@@ -83,6 +96,8 @@ public class ShareController implements CommunityConstant {
             while ((b = fis.read(buffer)) != -1) {
                 os.write(buffer, 0, b);
             }
+
+
         } catch (IOException e) {
             logger.error("获取长图失败: " + e.getMessage());
         }
