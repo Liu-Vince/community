@@ -107,30 +107,27 @@ public class QuartzConfig {
     }
 
     // 定时删wk创建的Image
+    // 删除WK图片任务
     @Bean
-    public JobDetailFactoryBean deleteImageDetail() {
-
+    public JobDetailFactoryBean wkImageDeleteJobDetail() {
         JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
         factoryBean.setJobClass(WKImageDeleteJob.class);
-        factoryBean.setName("deleteImageJob");
-        factoryBean.setGroup("deleteImageJobGroup");
+        factoryBean.setName("wkImageDeleteJob");
+        factoryBean.setGroup("communityJobGroup");
         factoryBean.setDurability(true);
         factoryBean.setRequestsRecovery(true);
-
         return factoryBean;
     }
 
+    // 删除WK图片触发器
     @Bean
-    public SimpleTriggerFactoryBean deleteImageTrigger(JobDetail deleteImageDetail) {
+    public SimpleTriggerFactoryBean wkImageDeleteTrigger(JobDetail wkImageDeleteJobDetail) {
         SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-        factoryBean.setJobDetail(deleteImageDetail);
-        factoryBean.setName("deleteImageTrigger");
-        factoryBean.setGroup("deleteImageTriggerGroup");
-        factoryBean.setRepeatInterval(1000 * 60 * 60 * 24);
-//        factoryBean.setRepeatInterval(1000 );
+        factoryBean.setJobDetail(wkImageDeleteJobDetail);
+        factoryBean.setName("wkImageDeleteTrigger");
+        factoryBean.setGroup("communityTriggerGroup");
+        factoryBean.setRepeatInterval(1000 * 60 * 10);
         factoryBean.setJobDataMap(new JobDataMap());
-
-
         return factoryBean;
     }
 

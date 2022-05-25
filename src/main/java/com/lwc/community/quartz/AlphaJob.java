@@ -7,6 +7,7 @@ import org.quartz.JobExecutionException;
 /**
  * @author Liu Wenchang
  */
+@Deprecated
 public class AlphaJob implements Job {
 
     @Override

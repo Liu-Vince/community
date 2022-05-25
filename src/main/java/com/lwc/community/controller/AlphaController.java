@@ -23,6 +23,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/alpha")
+@Deprecated
 public class AlphaController {
 
     @Autowired

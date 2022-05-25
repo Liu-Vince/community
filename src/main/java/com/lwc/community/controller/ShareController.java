@@ -49,8 +49,8 @@ public class ShareController implements CommunityConstant {
     @Value("${wk.image.storage}")
     private String wkImageStorage;
 
-    @Autowired
-    private DeleteShareService deleteShareService;
+//    @Autowired
+//    private DeleteShareService deleteShareService;
 
 
     @RequestMapping(path = "/share", method = RequestMethod.GET)
@@ -72,7 +72,7 @@ public class ShareController implements CommunityConstant {
 //        map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
 
         // 60分钟后销毁文件
-        deleteShareService.deleteShare(wkImageStorage + "/" + fileName + ".png");
+//        deleteShareService.deleteShare(wkImageStorage + "/" + fileName + ".png");
 
 
 //        return CommunityUtil.getJSONString(0, null, map);

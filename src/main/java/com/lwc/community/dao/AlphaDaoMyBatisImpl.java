@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @Primary
+@Deprecated
 public class AlphaDaoMyBatisImpl implements AlphaDao{
     @Override
     public String select() {

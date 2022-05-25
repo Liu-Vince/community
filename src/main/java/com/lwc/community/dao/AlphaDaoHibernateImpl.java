@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
  * @author 刘文长
  * @version 1.0
  */
+@Deprecated
 @Repository("alphaHibernate")
 public class AlphaDaoHibernateImpl implements AlphaDao{
 

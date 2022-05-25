@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
  * @version 1.0
  */
 @Configuration
+@Deprecated
 public class AlphaConfig {
 
     @Bean

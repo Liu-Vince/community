@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
  * @version 1.0
  */
 @Component
+@Deprecated
 public class AlphaInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(AlphaInterceptor.class);
 

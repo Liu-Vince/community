@@ -31,6 +31,7 @@ import java.util.Date;
  * @version 1.0
  */
 @Service
+@Deprecated
 //@Scope("prototype")
 public class AlphaService {
     private static final Logger logger = LoggerFactory.getLogger(AlphaService.class);

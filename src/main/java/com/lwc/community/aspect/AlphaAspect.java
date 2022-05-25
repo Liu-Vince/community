@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
  */
 //@Component
 //@Aspect
+@Deprecated
 public class AlphaAspect {
 
     @Pointcut("execution(* com.lwc.community.service.*.*(..))")

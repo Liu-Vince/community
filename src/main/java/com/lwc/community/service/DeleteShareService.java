@@ -1,23 +1,21 @@
 package com.lwc.community.service;
 
 import com.lwc.community.controller.ShareController;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Date;
 
-import static java.lang.Thread.sleep;
 
 /**
  * @author Liu Wenchang
  */
 @Service
+@Deprecated
 public class DeleteShareService {
 
     private static final Logger logger = LoggerFactory.getLogger(ShareController.class);

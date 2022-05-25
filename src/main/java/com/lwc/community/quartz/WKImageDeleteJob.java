@@ -16,24 +16,25 @@ import java.io.IOException;
  */
 public class WKImageDeleteJob implements Job {
 
-    private static final Logger logger = LoggerFactory.getLogger(PostScoreRefreshJob.class);
-    @Value("${wk.image.storage}")
-    private String imageStorage;
+    private static final Logger logger = LoggerFactory.getLogger(WKImageDeleteJob.class);
 
+    @Value("${wk.image.storage}")
+    private String wkImageStorage;
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        //创建一个文件对象
-        File file = new File(imageStorage);
-        // 删除文件
-//        deleteDirectory(file);
-        try {
-//            file.delete();
-            FileUtils.cleanDirectory(file);
-            logger.info("image被清理");
-        } catch (IOException e) {
-            logger.info("image清理失败"+e.getMessage());
-//            throw new RuntimeException(e);
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        File[] files = new File(wkImageStorage).listFiles();
+        if (files == null || files.length == 0) {
+            logger.info("没有WK图片，任务取消！");
+            return;
+        }
+
+        for (File file : files) {
+            // 删除一分钟之前创建的图片
+            if (System.currentTimeMillis() - file.lastModified() > 60 * 1000 * 3) {
+                logger.info("删除WK图片：" + file.getName());
+                file.delete();
+            }
         }
     }
 }
