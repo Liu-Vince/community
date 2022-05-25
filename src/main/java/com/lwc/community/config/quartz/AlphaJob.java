@@ -1,4 +1,4 @@
-package com.lwc.community.quartz;
+package com.lwc.community.config.quartz;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

@@ -1,6 +1,5 @@
-package com.lwc.community.quartz;
+package com.lwc.community.config.quartz;
 
-import com.lwc.community.util.CommunityConstant;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

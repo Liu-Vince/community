@@ -1,9 +1,9 @@
 package com.lwc.community.config;
 
-import com.lwc.community.quartz.AlphaJob;
-import com.lwc.community.quartz.DeleteLogJob;
-import com.lwc.community.quartz.PostScoreRefreshJob;
-import com.lwc.community.quartz.WKImageDeleteJob;
+import com.lwc.community.config.quartz.AlphaJob;
+import com.lwc.community.config.quartz.DeleteLogJob;
+import com.lwc.community.config.quartz.PostScoreRefreshJob;
+import com.lwc.community.config.quartz.WKImageDeleteJob;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.springframework.context.annotation.Bean;
@@ -98,7 +98,7 @@ public class QuartzConfig {
         factoryBean.setJobDetail(deleteLogDetail);
         factoryBean.setName("deleteLogTrigger");
         factoryBean.setGroup("deleteLogTriggerGroup");
-        factoryBean.setRepeatInterval(1000 * 60 * 60 * 24 * 7);
+        factoryBean.setRepeatInterval(1000 * 60 * 60 * 24);
 //        factoryBean.setRepeatInterval(1000);
         factoryBean.setJobDataMap(new JobDataMap());
 
