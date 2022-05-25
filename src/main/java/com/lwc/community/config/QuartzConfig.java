@@ -1,9 +1,9 @@
 package com.lwc.community.config;
 
-import com.lwc.community.config.quartz.AlphaJob;
-import com.lwc.community.config.quartz.DeleteLogJob;
-import com.lwc.community.config.quartz.PostScoreRefreshJob;
-import com.lwc.community.config.quartz.WKImageDeleteJob;
+import com.lwc.community.quartz.AlphaJob;
+import com.lwc.community.quartz.DeleteLogJob;
+import com.lwc.community.quartz.PostScoreRefreshJob;
+import com.lwc.community.quartz.WKImageDeleteJob;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package com.lwc.community.config.quartz;
+package com.lwc.community.quartz;
 
 import com.lwc.community.entity.DiscussPost;
 import com.lwc.community.service.DiscussPostService;

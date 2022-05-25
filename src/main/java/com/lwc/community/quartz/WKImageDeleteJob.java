@@ -1,4 +1,4 @@
-package com.lwc.community.config.quartz;
+package com.lwc.community.quartz;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.quartz.Job;

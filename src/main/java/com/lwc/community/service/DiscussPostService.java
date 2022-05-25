@@ -5,12 +5,14 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.lwc.community.dao.DiscussPostMapper;
 import com.lwc.community.entity.DiscussPost;
+import com.lwc.community.util.RedisKeyUtil;
 import com.lwc.community.util.SensitiveFilter;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
@@ -36,6 +38,9 @@ public class DiscussPostService {
 
     @Value("${caffeine.posts.expire-seconds}")
     private int expireSeconds;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     // Caffeine核心接口: cache, LoadingCache, AsyncLoadingCache
 
@@ -69,10 +74,19 @@ public class DiscussPostService {
 
 
                         // 二级缓存
+                        List<DiscussPost> list =(List<DiscussPost>) redisTemplate.opsForValue().get(RedisKeyUtil.getPostlistKey(offset, limit));
+                        if (list == null) {
+                            logger.debug("load psot list from DB.");
+                            list = discussPostMapper.selectDiscussPosts(0,offset, limit, 1);
+                            redisTemplate.opsForValue().set(RedisKeyUtil.getPostlistKey(offset, limit),list  , 180, TimeUnit.SECONDS);
+                            return list;
+                        } else {
+                            return list;
+                        }
 
 
-                        logger.debug("load psot list from DB.");
-                        return discussPostMapper.selectDiscussPosts(0,offset, limit, 1);
+//                        logger.debug("load psot list from DB.");
+//                        return discussPostMapper.selectDiscussPosts(0,offset, limit, 1);
 
 
                     }
@@ -86,8 +100,20 @@ public class DiscussPostService {
                 .build(new CacheLoader<Integer, Integer>() {
                     @Override
                     public @Nullable Integer load(Integer key) throws Exception {
-                        logger.debug("load psot list from DB.");
-                        return discussPostMapper.selectDiscussPostRows(key);
+
+                        Integer o =(Integer) redisTemplate.opsForValue().get(RedisKeyUtil.getPostrowsKey(key));
+                        if (o == null) {
+                            logger.debug("load psot list from DB.");
+                            o = discussPostMapper.selectDiscussPostRows(0);
+                            redisTemplate.opsForValue().set(RedisKeyUtil.getPostrowsKey(key),o  , 180, TimeUnit.SECONDS);
+                            return o;
+                        } else {
+                            return o;
+                        }
+
+
+//                        logger.debug("load psot list from DB.");
+//                        return discussPostMapper.selectDiscussPostRows(key);
                     }
                 });
 

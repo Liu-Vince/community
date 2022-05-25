@@ -19,6 +19,8 @@ public class RedisKeyUtil {
     private static final String PREFIX_UV = "uv";
     private static final String PREFIX_DAU = "dau";
     private static final String PREFIX_POST = "post";
+    private static final String PREFIX_POSTLIST = "postlist";
+    private static final String PREFIX_POSTROWS = "postrows";
 
 
     // 某个实体的赞
@@ -88,6 +90,13 @@ public class RedisKeyUtil {
     // 帖子分数
     public static String getPostScoreKey() {
         return PREFIX_POST + SPLIT + "score";
+    }
+
+    public static String getPostlistKey(int offset, int limit){
+        return PREFIX_POSTLIST + SPLIT + offset + SPLIT + limit;
+    }
+    public static String getPostrowsKey(int userId){
+        return PREFIX_POSTROWS + SPLIT + userId;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.lwc.community;
 
+import com.lwc.community.util.RedisKeyUtil;
+import org.elasticsearch.common.collect.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,5 +150,10 @@ public class RedisTest {
             redisTemplate.opsForHyperLogLog().add(redisKey,r);
         }
         System.out.println(redisTemplate.opsForHyperLogLog().size(redisKey));
+    }
+
+    @Test
+    public void testgetPostRows(){
+        System.out.println((Integer) redisTemplate.opsForValue().get(RedisKeyUtil.getPostrowsKey(0)));
     }
 }
